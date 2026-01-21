@@ -10,9 +10,9 @@ import { Utxo } from '../models/utxo.js';
 import * as borsh from 'borsh';
 import { sha256 } from '@ethersproject/sha2';
 import { PublicKey } from '@solana/web3.js';
-import { RELAYER_API_URL, PROGRAM_ID } from './constants.js';
-import { logger } from './logger.js';
-import { getConfig } from '../config.js';
+import { RELAYER_API_URL, PROGRAM_ID } from './constants';
+import { logger } from './logger';
+import { getConfig } from '../config';
 
 /**
  * Calculate deposit fee based on deposit amount and fee rate

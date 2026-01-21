@@ -1,11 +1,11 @@
 import { Keypair, PublicKey } from '@solana/web3.js';
 import nacl from 'tweetnacl';
 import * as crypto from 'crypto';
-import { Utxo } from '../models/utxo.js';
+import { Utxo } from '../models/utxo';
 import { WasmFactory } from '@lightprotocol/hasher.rs';
-import { Keypair as UtxoKeypair } from '../models/keypair.js';
+import { Keypair as UtxoKeypair } from '../models/keypair';
 import { keccak256 } from '@ethersproject/keccak256';
-import { PROGRAM_ID, TRANSACT_IX_DISCRIMINATOR, TRANSACT_SPL_IX_DISCRIMINATOR } from './constants.js';
+import { PROGRAM_ID, TRANSACT_IX_DISCRIMINATOR, TRANSACT_SPL_IX_DISCRIMINATOR } from './constants';
 import BN from 'bn.js';
 
 

@@ -94,10 +94,11 @@ async function initPrivacyCashClient(
   encryptionService.deriveEncryptionKeyFromSignature(signed.signature!);
 
   // Initialize Privacy Cash client
-  const client = new PrivacyCash(connection, {
-    publicKey: wallet.publicKey,
-    encryptionService,
-    storage: typeof window !== 'undefined' ? localStorage : undefined,
+  const client = new PrivacyCash({
+    RPC_url: connection.rpcEndpoint,
+    owner: wallet.publicKey,
+    // encryptionService,
+    // storage: typeof window !== 'undefined' ? localStorage : undefined,
   });
 
   return { client, encryptionService };
@@ -152,7 +153,7 @@ async function runPrivacyCashPayment(wallet: any) {
       });
 
       console.log("✅ Deposit successful!");
-      console.log("   Transaction:", depositResult.txHash);
+      console.log("   Transaction:", depositResult.tx);
       console.log();
 
       // Update balance
@@ -179,7 +180,7 @@ async function runPrivacyCashPayment(wallet: any) {
       noteHash: noteHash,
       commitment: commitment,
       timestamp: Date.now(),
-      withdrawProof: privateBalance.balance.toString(), // Proof of balance
+      withdrawProof: privateBalance.lamports.toString(), // Proof of balance
     },
   };
 
@@ -253,6 +254,11 @@ async function checkPrivateBalance(wallet: any) {
     throw error;
   }
 }
+
+export async function demoPayWithPrivacyCash(wallet: any) {
+  return runPrivacyCashPayment(wallet);
+}
+
 
 export {
   runPrivacyCashPayment,

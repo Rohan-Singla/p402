@@ -1,4 +1,4 @@
-import { RELAYER_API_URL } from "./utils/constants.js";
+import { RELAYER_API_URL } from "./utils/constants";
 
 type Config = {
     withdraw_fee_rate: number

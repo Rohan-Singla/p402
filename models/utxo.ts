@@ -6,10 +6,10 @@
  */
 
 import BN from 'bn.js';
-import { Keypair } from './keypair.js';
+import { Keypair } from './keypair';
 import * as hasher from '@lightprotocol/hasher.rs';
 import { ethers } from 'ethers';
-import { getMintAddressField } from '../utils/utils.js';
+import { getMintAddressField } from '../utils/utils';
 import { PublicKey } from '@solana/web3.js';
 /**
  * Simplified Utxo class inspired by Tornado Cash Nova
