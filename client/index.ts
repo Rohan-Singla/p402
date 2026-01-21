@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js";
 import { PrivacyCash } from "privacycash";
 import { WasmFactory } from '@lightprotocol/hasher.rs';
-import { EncryptionService } from "privacycash";
+import { EncryptionService } from "../utils/encryption";
 
 /**
  * Privacy Cash x402 Payment Client

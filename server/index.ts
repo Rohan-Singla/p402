@@ -1,14 +1,13 @@
 // server/privacycash-x402-server.ts
 import express, { Request, Response } from "express";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { PrivacyCash } from "privacycash";
 import crypto from "crypto";
 
 const app = express();
 app.use(express.json());
 
 // Server configuration
-const MERCHANT_WALLET = "YOUR_MERCHANT_WALLET_ADDRESS"; // Replace with actual merchant wallet
+const MERCHANT_WALLET = "8nUT43tEDZo8U8fPypuAv76Xy1ojgKLh8oCVnkxs9nkj"; // Replace with actual merchant wallet
 const API_PRICE = 10_000_000; // 0.01 SOL in lamports
 const NETWORK = "devnet";
 

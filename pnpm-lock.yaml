@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@ethersproject/keccak256':
+        specifier: ^5.8.0
+        version: 5.8.0
+      '@ethersproject/sha2':
+        specifier: ^5.8.0
+        version: 5.8.0
       '@lightprotocol/hasher.rs':
         specifier: ^0.2.1
         version: 0.2.1
@@ -23,12 +29,24 @@ importers:
       axios:
         specifier: ^1.13.2
         version: 1.13.2
+      bn:
+        specifier: ^1.0.5
+        version: 1.0.5
+      bn.js:
+        specifier: ^5.2.2
+        version: 5.2.2
+      borsh:
+        specifier: ^2.0.0
+        version: 2.0.0
       bs58:
         specifier: ^6.0.0
         version: 6.0.0
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
+      ethers:
+        specifier: ^6.16.0
+        version: 6.16.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -41,6 +59,9 @@ importers:
       privacycash:
         specifier: ^1.1.11
         version: 1.1.11(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
+      tweetnacl:
+        specifier: ^1.0.3
+        version: 1.0.3
     devDependencies:
       '@types/express':
         specifier: ^5.0.6
@@ -356,6 +377,9 @@ packages:
 
   bn.js@5.2.2:
     resolution: {integrity: sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==}
+
+  bn@1.0.5:
+    resolution: {integrity: sha512-7TvGbqbZb6lDzsBtNz1VkdXXV0BVmZKPPViPmo2IpvwaryF7P+QKYKACyVkwo2mZPr2CpFiz7EtgPEcc3o/JFQ==}
 
   body-parser@2.2.2:
     resolution: {integrity: sha512-oP5VkATKlNwcgvxi0vM0p/D3n2C3EReYVX+DNYs5TjZFn/oQt2j+4sVJtSMr18pdRr8wjTcBl6LoV+FUwzPmNA==}
@@ -1563,6 +1587,8 @@ snapshots:
   bluebird@3.7.2: {}
 
   bn.js@5.2.2: {}
+
+  bn@1.0.5: {}
 
   body-parser@2.2.2:
     dependencies:
