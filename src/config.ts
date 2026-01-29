@@ -13,7 +13,7 @@ let config: Config | undefined
 export async function getConfig<K extends keyof Config>(key: K): Promise<Config[K]> {
     if (!config) {
         const res = await fetch(RELAYER_API_URL + '/config')
-        config = await res.json()
+        config = (await res.json()) as Config
     }
     if (typeof config![key] == 'undefined') {
         throw new Error(`can not get ${key} from ${RELAYER_API_URL}/config`)

@@ -75,3 +75,6 @@ export const tokens: Token[] = [
         units_per_token: 1e11
     },
 ]
+
+// Default balance proof validity (5 minutes)
+export const BALANCE_PROOF_VALIDITY_MS = 5 * 60 * 1000;

@@ -220,7 +220,7 @@ export class EncryptionService {// Version identifier for encryption scheme (8-b
       throw new Error('Failed to decrypt data. Invalid encryption key or corrupted data.');
     }
   }
-  
+
   // Custom timingSafeEqual for browser compatibility
   private timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
     if (a.length !== b.length) {

@@ -1,17 +1,25 @@
 {
-  "name": "p402",
+  "name": "privacycash-x402",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "server": "nodemon --watch server --ext ts --exec ts-node server/index.ts",
-    "client": "nodemon --watch client --ext ts --exec ts-node client/index.ts",
-    "example": "nodemon --watch client --ext ts --exec ts-node examples/sdk-demo.ts",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "build": "tsc",
+    "example:server": "ts-node examples/server-example.ts",
+    "example:client": "ts-node examples/client-example.ts",
+    "dev": "concurrently \"npm run example:server\" \"npm run example:client\""
   },
-  "keywords": [],
+  "keywords": ["solana", "privacy", "x402", "payments", "zk-proofs"],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Privacy-preserving x402 payment SDK for Solana using Privacy Cash",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "dependencies": {
     "@ethersproject/keccak256": "^5.8.0",
     "@ethersproject/sha2": "^5.8.0",
@@ -34,6 +42,7 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.6",
+    "concurrently": "^8.2.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

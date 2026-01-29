@@ -1,6 +1,6 @@
 /**
  * UTXO (Unspent Transaction Output) module for ZK Cash
- * 
+ *
  * Provides UTXO functionality for the ZK Cash system
  * Based on: https://github.com/tornadocash/tornado-nova
  */
@@ -32,7 +32,7 @@ export class Utxo {
          * which is:
          * - private key: random [31;u8]
          * - public key: PoseidonHash(privateKey)
-         * 
+         *
          * Generate a new keypair for each UTXO
          */
         keypair,
@@ -103,4 +103,4 @@ export class Utxo {
         // Output as formatted JSON
         console.log(JSON.stringify(utxoData, null, 2));
     }
-} 
+}

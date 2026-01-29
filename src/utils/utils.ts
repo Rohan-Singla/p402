@@ -1,12 +1,12 @@
 /**
  * Utility functions for ZK Cash
- * 
+ *
  * Provides common utility functions for the ZK Cash system
  * Based on: https://github.com/tornadocash/tornado-nova
  */
 
 import BN from 'bn.js';
-import { Utxo } from '../models/utxo.js';
+import { Utxo } from '../models/utxo';
 import * as borsh from 'borsh';
 import { sha256 } from '@ethersproject/sha2';
 import { PublicKey } from '@solana/web3.js';

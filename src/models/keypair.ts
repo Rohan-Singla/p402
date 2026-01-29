@@ -1,6 +1,6 @@
 /**
  * Keypair module for ZK Cash
- * 
+ *
  * Provides cryptographic keypair functionality for the ZK Cash system
  * Based on: https://github.com/tornadocash/tornado-nova
  */
@@ -49,4 +49,4 @@ export class Keypair {
         const wallet = ethers.Wallet.createRandom();
         return new Keypair(wallet.privateKey, lightWasm);
     }
-} 
+}
