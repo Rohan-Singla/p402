@@ -1,4 +1,4 @@
-# Privacy Cash x402 SDK
+# p402 ( Private x402 SDK )
 
 A privacy-preserving payment SDK for Solana implementing the HTTP 402 Payment Required protocol using [Privacy Cash](https://privacycash.org).
 
@@ -113,4 +113,4 @@ src/
 
 ## License
 
-ISC
+MIT
