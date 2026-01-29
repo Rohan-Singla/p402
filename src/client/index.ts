@@ -1,14 +1,13 @@
 import {
   Connection,
   LAMPORTS_PER_SOL,
-  PublicKey,
+  Keypair,
 } from '@solana/web3.js';
 import { PrivacyCash } from 'privacycash';
 import { WasmFactory } from '@lightprotocol/hasher.rs';
 import crypto from 'crypto';
 import {
   X402ClientConfig,
-  WalletAdapter,
   PaymentQuote,
   PaymentPayload,
   PrivateBalance,
@@ -22,29 +21,46 @@ import { InsufficientBalanceError } from '../errors';
 /**
  * X402 Payment Client for Privacy Cash
  * Handles private payments for API access using Privacy Cash protocol
+ *
+ * Supports mock mode for demos without real transactions
  */
 export class X402PaymentClient {
   private config: X402ClientConfig;
   private connection: Connection;
-  private wallet: WalletAdapter;
+  private keypair: Keypair;
   private client: PrivacyCash | null = null;
   private encryptionService: EncryptionService | null = null;
   private initialized: boolean = false;
   private network: SolanaNetwork;
+  private mockMode: boolean;
+  private mockBalance: number = 0; // Mock balance in lamports
 
   constructor(config: X402ClientConfig) {
     this.config = config;
     this.connection = new Connection(config.rpcUrl, 'confirmed');
-    this.wallet = config.wallet;
+    this.keypair = config.keypair;
     this.network = config.rpcUrl.includes('devnet') ? 'devnet' : 'mainnet-beta';
+    this.mockMode = config.mockMode ?? false;
   }
 
   /**
    * Initialize the client - must be called before other operations
-   * Signs a message to derive encryption keys
    */
   async initialize(): Promise<void> {
     if (this.initialized) {
+      return;
+    }
+
+    if (this.mockMode) {
+      console.log('Initializing Privacy Cash SDK (MOCK MODE)...');
+      console.log('  Transactions will be simulated, no real SOL required');
+
+      // Initialize encryption service from keypair
+      this.encryptionService = new EncryptionService();
+      this.encryptionService.deriveEncryptionKeyFromWallet(this.keypair);
+
+      this.initialized = true;
+      console.log('Privacy Cash SDK initialized (MOCK MODE)');
       return;
     }
 
@@ -53,18 +69,14 @@ export class X402PaymentClient {
     // Initialize WASM
     await WasmFactory.getInstance();
 
-    // Get wallet signature for encryption
-    const message = new TextEncoder().encode('Privacy Money account sign in');
-    const signature = await this.wallet.signMessage(message);
-
-    // Initialize encryption service
+    // Initialize encryption service from keypair
     this.encryptionService = new EncryptionService();
-    this.encryptionService.deriveEncryptionKeyFromSignature(signature);
+    this.encryptionService.deriveEncryptionKeyFromWallet(this.keypair);
 
-    // Initialize Privacy Cash client
+    // Initialize Privacy Cash client with keypair
     this.client = new PrivacyCash({
       RPC_url: this.connection.rpcEndpoint,
-      owner: this.wallet.publicKey.toBase58(),
+      owner: this.keypair,
     });
 
     this.initialized = true;
@@ -76,6 +88,13 @@ export class X402PaymentClient {
    */
   async getPrivateBalance(): Promise<PrivateBalance> {
     this.ensureInitialized();
+
+    if (this.mockMode) {
+      return {
+        lamports: this.mockBalance,
+        sol: this.mockBalance / LAMPORTS_PER_SOL,
+      };
+    }
 
     const balance = await this.client!.getPrivateBalance();
     return {
@@ -91,6 +110,16 @@ export class X402PaymentClient {
     this.ensureInitialized();
 
     console.log(`Depositing ${lamports / LAMPORTS_PER_SOL} SOL into Privacy Cash pool...`);
+
+    if (this.mockMode) {
+      // Simulate deposit delay
+      await this.sleep(1500);
+      this.mockBalance += lamports;
+      const mockTx = this.generateMockTxId();
+      console.log('Deposit successful! (MOCK)');
+      console.log(`Transaction: ${mockTx}`);
+      return { tx: mockTx };
+    }
 
     const result = await this.client!.deposit({ lamports });
 
@@ -141,10 +170,15 @@ export class X402PaymentClient {
 
     const xPaymentHeader = Buffer.from(JSON.stringify(payload)).toString('base64');
 
+    // Deduct from mock balance if in mock mode
+    if (this.mockMode) {
+      this.mockBalance -= quote.payment.amount;
+    }
+
     return {
       'X-Payment': xPaymentHeader,
       'X-Privacy-Commitment': commitment,
-      'X-Wallet-Address': this.wallet.publicKey.toBase58(),
+      'X-Wallet-Address': this.keypair.publicKey.toBase58(),
     };
   }
 
@@ -214,7 +248,7 @@ export class X402PaymentClient {
     const proof: BalanceProof = {
       balance,
       timestamp: Date.now(),
-      wallet: this.wallet.publicKey.toBase58(),
+      wallet: this.keypair.publicKey.toBase58(),
     };
     return Buffer.from(JSON.stringify(proof)).toString('base64');
   }
@@ -223,7 +257,7 @@ export class X402PaymentClient {
    * Generate unique commitment for this payment
    */
   private generateCommitment(): string {
-    const data = `${this.wallet.publicKey.toBase58()}-${Date.now()}-${Math.random()}`;
+    const data = `${this.keypair.publicKey.toBase58()}-${Date.now()}-${Math.random()}`;
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 
@@ -238,9 +272,33 @@ export class X402PaymentClient {
    * Ensure client is initialized
    */
   private ensureInitialized(): void {
-    if (!this.initialized || !this.client) {
+    if (!this.initialized) {
       throw new Error('Client not initialized. Call initialize() first.');
     }
+    if (!this.mockMode && !this.client) {
+      throw new Error('Client not initialized. Call initialize() first.');
+    }
+  }
+
+  /**
+   * Generate mock transaction ID
+   */
+  private generateMockTxId(): string {
+    return crypto.randomBytes(32).toString('base64').replace(/[^a-zA-Z0-9]/g, '').substring(0, 44);
+  }
+
+  /**
+   * Sleep helper
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Check if running in mock mode
+   */
+  isMockMode(): boolean {
+    return this.mockMode;
   }
 
   /**
@@ -255,5 +313,12 @@ export class X402PaymentClient {
    */
   getEncryptionService(): EncryptionService | null {
     return this.encryptionService;
+  }
+
+  /**
+   * Get the public key
+   */
+  getPublicKey() {
+    return this.keypair.publicKey;
   }
 }

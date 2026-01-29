@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey, Keypair } from '@solana/web3.js';
 
 // Network types
 export type SolanaNetwork = 'devnet' | 'mainnet-beta';
@@ -46,7 +46,8 @@ export interface X402ServerConfig {
 // Client config types
 export interface X402ClientConfig {
   rpcUrl: string;
-  wallet: WalletAdapter;
+  keypair: Keypair;
+  mockMode?: boolean; // Enable mock mode for demos (no real transactions)
 }
 
 // Wallet adapter interface (compatible with Phantom, Solflare, etc.)

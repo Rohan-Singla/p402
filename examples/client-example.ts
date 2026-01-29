@@ -4,56 +4,40 @@
  * Make sure the server is running first: npm run example:server
  *
  * Environment variables:
- * - WALLET_KEYPAIR: JSON array of keypair bytes (or will use mock wallet)
+ * - WALLET_KEYPAIR: JSON array of keypair bytes (required)
  * - RPC_URL: Solana RPC URL (default: devnet)
  * - SERVER_URL: x402 server URL (default: http://localhost:3001)
+ * - MOCK_MODE: Set to "false" to use real Privacy Cash (requires mainnet)
  */
 
 import 'dotenv/config';
-import { Keypair, PublicKey, Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import nacl from 'tweetnacl';
-import { X402PaymentClient, WalletAdapter } from '../src';
+import { Keypair, Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { X402PaymentClient } from '../src';
 
 // Load config from environment
 const RPC_URL = process.env.RPC_URL || 'https://api.devnet.solana.com';
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
+const MOCK_MODE = process.env.MOCK_MODE !== 'false'; // Default to mock mode
 
 /**
- * Create wallet adapter from keypair bytes or generate mock
+ * Load keypair from environment
  */
-function createWallet(): { wallet: WalletAdapter; keypair?: Keypair } {
-  // Try to load from environment
-  if (process.env.WALLET_KEYPAIR) {
-    try {
-      const keypairBytes = new Uint8Array(JSON.parse(process.env.WALLET_KEYPAIR));
-      const keypair = Keypair.fromSecretKey(keypairBytes);
-
-      const wallet: WalletAdapter = {
-        publicKey: keypair.publicKey,
-        signMessage: async (message: Uint8Array) => {
-          return nacl.sign.detached(message, keypair.secretKey);
-        },
-      };
-
-      return { wallet, keypair };
-    } catch (e) {
-      console.warn('Failed to parse WALLET_KEYPAIR, using mock wallet');
-    }
+function loadKeypair(): Keypair {
+  if (!process.env.WALLET_KEYPAIR) {
+    console.error('Error: WALLET_KEYPAIR environment variable is required');
+    console.error('Generate one with: solana-keygen new --outfile wallet.json');
+    console.error('Then add to .env: WALLET_KEYPAIR=[...contents of wallet.json...]');
+    process.exit(1);
   }
 
-  // Use mock wallet for demo (won't work for real transactions)
-  console.log('Using mock wallet (for demo only)');
-  const mockPublicKey = new PublicKey('4tMdV9E1vsFP2WFnzD3iBmrFz7hHJxR4qkT44tK7J9ET');
-
-  const wallet: WalletAdapter = {
-    publicKey: mockPublicKey,
-    signMessage: async (message: Uint8Array) => {
-      console.log('Mock signMessage called');
-      return new Uint8Array(64); // Fake signature
-    },
-  };
-
-  return { wallet };
+  try {
+    const keypairBytes = new Uint8Array(JSON.parse(process.env.WALLET_KEYPAIR));
+    return Keypair.fromSecretKey(keypairBytes);
+  } catch (e) {
+    console.error('Error: Failed to parse WALLET_KEYPAIR');
+    console.error('Make sure it is a valid JSON array of 64 bytes');
+    process.exit(1);
+  }
 }
 
 /**
@@ -63,39 +47,45 @@ async function main() {
   console.log('\nPrivacy Cash x402 Client Demo\n');
   console.log('==============================\n');
 
-  // Create wallet
-  const { wallet, keypair } = createWallet();
-  console.log(`Wallet: ${wallet.publicKey.toBase58()}`);
+  // Load keypair
+  const keypair = loadKeypair();
+  console.log(`Wallet: ${keypair.publicKey.toBase58()}`);
 
-  // Check wallet balance if we have a real keypair
-  if (keypair) {
+  // Check wallet balance (skip in mock mode)
+  if (!MOCK_MODE) {
     const connection = new Connection(RPC_URL, 'confirmed');
     const balance = await connection.getBalance(keypair.publicKey);
     console.log(`Wallet SOL balance: ${balance / LAMPORTS_PER_SOL} SOL`);
 
     if (balance < 0.02 * LAMPORTS_PER_SOL) {
-      console.log('\nWarning: Low SOL balance. Get devnet SOL from:');
-      console.log('https://faucet.solana.com/\n');
+      console.log('\nWarning: Low SOL balance.');
+      console.log(`Address: ${keypair.publicKey.toBase58()}\n`);
     }
   }
 
   // Create x402 client
   const client = new X402PaymentClient({
     rpcUrl: RPC_URL,
-    wallet,
+    keypair,
+    mockMode: MOCK_MODE,
   });
 
-  // Initialize client (signs message to derive encryption keys)
+  if (MOCK_MODE) {
+    console.log('\n[MOCK MODE] Simulating Privacy Cash - no real transactions');
+    console.log('Set MOCK_MODE=false in .env to use real Privacy Cash (mainnet only)\n');
+  }
+
+  // Initialize client
   console.log('\nInitializing client...');
   await client.initialize();
 
   // Check private balance
   console.log('\nChecking private balance...');
   try {
-    const balance = await client.getPrivateBalance();
-    console.log(`Private balance: ${balance.sol} SOL (${balance.lamports} lamports)`);
+    const privateBalance = await client.getPrivateBalance();
+    console.log(`Private balance: ${privateBalance.sol} SOL (${privateBalance.lamports} lamports)`);
   } catch (e) {
-    console.log('Could not check private balance (expected with mock wallet)');
+    console.log('No private balance yet (first time using Privacy Cash)');
   }
 
   // Try to access premium endpoint
@@ -124,9 +114,12 @@ async function main() {
   } catch (error) {
     console.error('\nPayment failed:', error);
 
-    if (error instanceof Error && error.message.includes('402')) {
-      console.log('\nTip: Make sure you have enough SOL in the privacy pool');
-      console.log('You can deposit using client.deposit(lamports)');
+    if (error instanceof Error) {
+      if (error.message.includes('insufficient funds')) {
+        console.log('\nTip: You need SOL in your wallet to deposit into the privacy pool');
+        console.log(`Get devnet SOL: https://faucet.solana.com/`);
+        console.log(`Your address: ${keypair.publicKey.toBase58()}`);
+      }
     }
   }
 }
