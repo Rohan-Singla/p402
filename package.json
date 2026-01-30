@@ -5,13 +5,26 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "example:server": "ts-node examples/server-example.ts",
     "example:client": "ts-node examples/client-example.ts",
     "dev": "concurrently \"npm run example:server\" \"npm run example:client\""
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "keywords": ["solana", "privacy", "x402", "payments", "zk-proofs"],
-  "author": "",
-  "license": "ISC",
+  "author": "Your Name <your@email.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/privacycash-x402"
+  },
+  "homepage": "https://github.com/yourusername/privacycash-x402#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/privacycash-x402/issues"
+  },
   "description": "Privacy-preserving x402 payment SDK for Solana using Privacy Cash",
   "exports": {
     ".": {
@@ -35,11 +48,11 @@
     "ethers": "^6.16.0",
     "express": "^5.2.1",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.11",
     "privacycash": "^1.1.11",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
+    "nodemon": "^3.1.11",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.6",
     "concurrently": "^8.2.2",

@@ -15,7 +15,7 @@ import express, { Request, Response } from 'express';
 import { X402PaymentServer } from '../src/server';
 
 // Load config from environment
-const MERCHANT_WALLET = process.env.MERCHANT_WALLET || '8nUT43tEDZo8U8fPypuAv76Xy1ojgKLh8oCVnkxs9nkj';
+const MERCHANT_WALLET = process.env.MERCHANT_WALLET || '';
 const API_PRICE = parseInt(process.env.API_PRICE || '10000000'); // 0.01 SOL
 const RPC_URL = process.env.RPC_URL || 'https://api.devnet.solana.com';
 

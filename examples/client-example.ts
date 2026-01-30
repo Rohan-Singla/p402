@@ -25,7 +25,6 @@ const MOCK_MODE = process.env.MOCK_MODE !== 'false'; // Default to mock mode
 function loadKeypair(): Keypair {
   if (!process.env.WALLET_KEYPAIR) {
     console.error('Error: WALLET_KEYPAIR environment variable is required');
-    console.error('Generate one with: solana-keygen new --outfile wallet.json');
     console.error('Then add to .env: WALLET_KEYPAIR=[...contents of wallet.json...]');
     process.exit(1);
   }
@@ -71,22 +70,13 @@ async function main() {
   });
 
   if (MOCK_MODE) {
-    console.log('\n[MOCK MODE] Simulating Privacy Cash - no real transactions');
+    console.log('\n[MOCK MODE] Simulating p402 - no real transactions');
     console.log('Set MOCK_MODE=false in .env to use real Privacy Cash (mainnet only)\n');
   }
 
   // Initialize client
   console.log('\nInitializing client...');
   await client.initialize();
-
-  // Check private balance
-  console.log('\nChecking private balance...');
-  try {
-    const privateBalance = await client.getPrivateBalance();
-    console.log(`Private balance: ${privateBalance.sol} SOL (${privateBalance.lamports} lamports)`);
-  } catch (e) {
-    console.log('No private balance yet (first time using Privacy Cash)');
-  }
 
   // Try to access premium endpoint
   console.log(`\nAccessing premium endpoint at ${SERVER_URL}/premium...`);
