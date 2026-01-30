@@ -106,10 +106,33 @@ src/
 - **Zero-Knowledge**: Payment validity proven without revealing identity
 - **Double-Spend Protected**: Each commitment can only be used once
 
+## Primary Use Cases
+
+| User Type | Example | Why p402? |
+|-----------|---------|-----------|
+| **Backend Services** | AI API paying for data APIs | Privacy between service providers |
+| **CLI Tools** | Payment tools for developers | Programmatic private payments |
+| **Bots/Automation** | Trading bots, monitoring services | Automated payments without linking activity |
+| **B2B Integrations** | Company A's service paying Company B's API | Hide business relationships on-chain |
+| **Privacy-first Businesses** | VPN providers, privacy tools | Users who specifically want unlinkable payments |
+
+**Note:** This SDK requires full keypair access and is designed for server-side/CLI usage.
+
 ## Limitations
 
 - **Mainnet Only**: Privacy Cash is deployed only on Solana mainnet
 - **Mock Mode**: Use `mockMode: true` for development/demos without real SOL
+- **Balance Proof**: Current implementation uses client-reported balance proofs (see Upcoming Updates)
+
+### Security Note
+
+Production deployments should await ZK proof integration.
+
+### Roadmap
+
+- [ ] ZK balance proof generation via Privacy Cash SDK
+- [ ] Server-side proof verification against on-chain state
+- [ ] Mainnet launch with full cryptographic guarantees
 
 ## License
 
