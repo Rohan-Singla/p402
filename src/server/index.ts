@@ -63,7 +63,7 @@ export class X402PaymentServer {
       // Initialize Privacy Cash client
       this.merchantClient = new PrivacyCash({
         RPC_url: this.config.rpcUrl,
-        owner: keypair.publicKey.toBase58(),
+        owner: keypair,
       });
 
       console.log('Merchant Privacy Cash client initialized');
