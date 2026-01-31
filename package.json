@@ -14,7 +14,13 @@
     "dist",
     "README.md"
   ],
-  "keywords": ["solana", "privacy", "x402", "payments", "zk-proofs"],
+  "keywords": [
+    "solana",
+    "privacy",
+    "x402",
+    "payments",
+    "zk-proofs"
+  ],
   "author": "Rohan Singla rohansinglawork@gmail.com",
   "license": "MIT",
   "repository": {
@@ -23,7 +29,7 @@
   },
   "homepage": "https://github.com/Rohan-Singla/p402",
   "bugs": {
-    "url": "https://github.com/yourusername/privacycash-x402/issues"
+    "url": "https://github.com/Rohan-Singla/p402/issues"
   },
   "description": "Privacy-preserving x402 payment SDK for Solana using Privacy Cash",
   "exports": {
@@ -49,13 +55,14 @@
     "express": "^5.2.1",
     "node-fetch": "^3.3.2",
     "privacycash": "^1.1.11",
+    "privacycash-x402": "^1.0.0",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.6",
     "concurrently": "^8.2.2",
+    "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

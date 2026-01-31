@@ -129,8 +129,24 @@ Client                              Server
 
 ## Run Examples
 
+### Using the npm package (recommended)
+
 ```bash
-# Clone the repo
+git clone https://github.com/Rohan-Singla/p402
+cd p402/examples-npm
+npm install
+
+# Quick demo (server + client in one file)
+npx ts-node simple.ts
+
+# Or run separately:
+# Terminal 1: npx ts-node server.ts
+# Terminal 2: npx ts-node client.ts
+```
+
+### From source
+
+```bash
 git clone https://github.com/Rohan-Singla/p402
 cd p402
 npm install

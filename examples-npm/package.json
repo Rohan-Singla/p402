@@ -1,0 +1,21 @@
+{
+  "name": "p402-examples",
+  "version": "1.0.0",
+  "description": "Examples using the privacycash-x402 npm package",
+  "scripts": {
+    "server": "npx ts-node server.ts",
+    "client": "npx ts-node client.ts",
+    "simple": "npx ts-node simple.ts"
+  },
+  "dependencies": {
+    "privacycash-x402": "file:..",
+    "express": "^5.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

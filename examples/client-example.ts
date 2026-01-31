@@ -14,6 +14,8 @@ import 'dotenv/config';
 import { Keypair, Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { X402PaymentClient } from '../src';
 
+
+
 // Load config from environment
 const RPC_URL = process.env.RPC_URL || 'https://api.devnet.solana.com';
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
